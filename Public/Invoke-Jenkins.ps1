@@ -22,6 +22,13 @@ function Invoke-Jenkins {
 
     $attempts = 0
 
+    Write-Debug "---- Invoke-Jenkins ----"
+    Write-Debug "Resource: $Resource"
+    Write-Debug "Request: $request"
+    Write-Debug "Method: $Method"
+    Write-Debug "Body: $Body"
+    Write-Debug "Query: $Query"
+
     while ($attempts -lt $MaximumAttempts) {
 
         try {
