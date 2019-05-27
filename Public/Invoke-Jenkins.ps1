@@ -1,32 +1,24 @@
-
 function Invoke-Jenkins {
+    [CmdletBinding()]
     param (
         [Parameter(Mandatory=$true)]
         [String] $Resource,
         [String] $Method = "GET",
         [Object] $Body,
+        [Hashtable] $Form,
         [Hashtable] $Query = @{},
         [String] $ContentType = "application/json",
+        [ValidateRange("NonNegative")]
         [Int] $MaximumRedirectionCount = 0,
         [String] $Username = $script:apiUsername,
         [SecureString] $Password = $script:apiPassword,
+        [ValidateRange("NonNegative")]
         [int] $MaximumAttempts = 3,
         [bool] $TreatRedirectAsSucces = $true
     )
-
-    if ($MaximumAttempts -lt 1) {
-        throw "-MaxiumAttemps value must be greater than 0"
-    }
-
-    $basicAuthCreds = ConvertTo-BasicAuth -Username $Username -Password $Password
-
-    $request = [System.UriBuilder] "$($env:JENKINS_VALIDATE_URL)/$Resource"
+    $headers = Get-JenkinsRequestHeaders -Username $Username -Password $Password
+    $request = [System.UriBuilder] "$($script:jenkinsUrl)/$Resource"
     $request.Query = Get-Params -Query $Query
-
-    $Headers = @{
-        'Authorization' = "Basic $basicAuthCreds"
-        "$($crumbrequestfield)" = "$crumbData"
-    }
 
     $attempts = 0
 
@@ -34,15 +26,27 @@ function Invoke-Jenkins {
 
         try {
             $attempts += 1
-            $response = Invoke-WebRequest -Uri $Request.Uri `
-            -Headers $Headers `
-            -Method $Method `
-            -Body $body `
-            -ContentType $ContentType `
-            -UseBasicParsing `
-            -TimeoutSec 30 `
-            -ErrorAction SilentlyContinue `
-            -MaximumRedirection $MaximumRedirectionCount
+            if($null -ne $Form){
+                $response = Invoke-WebRequest -Uri $Request.Uri `
+                -Headers $headers `
+                -Method $Method `
+                -Form $Form `
+                -UseBasicParsing `
+                -TimeoutSec 30 `
+                -ErrorAction SilentlyContinue `
+                -MaximumRedirection $MaximumRedirectionCount
+            }
+            else {
+                $response = Invoke-WebRequest -Uri $Request.Uri `
+                -Headers $headers `
+                -Method $Method `
+                -Body $body `
+                -ContentType $ContentType `
+                -UseBasicParsing `
+                -TimeoutSec 30 `
+                -ErrorAction SilentlyContinue `
+                -MaximumRedirection $MaximumRedirectionCount
+            }
             Write-Debug "Response for Invoke-Jenkins: StatusCode : $($response.StatusCode), Headers: $($response.Headers), Content: $($response.Content)"
             return $response
         } catch [System.Net.Http.HttpRequestException] {

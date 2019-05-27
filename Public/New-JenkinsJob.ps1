@@ -1,9 +1,10 @@
 function New-JenkinsJob {
+    [CmdletBinding()]
     param (
         [String] $Folder = "",
-        [Parameter(Mandatory=$true)] 
+        [Parameter(Mandatory=$true)]
         [String] $Job,
-        [Parameter(Mandatory=$true)] 
+        [Parameter(Mandatory=$true)]
         [String] $jobConfigXML
     )
 

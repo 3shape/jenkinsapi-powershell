@@ -12,7 +12,7 @@
     RootModule = 'ThreeShape.Jenkins.psm1'
 
     # Version number of this module.
-    ModuleVersion = '0.0.10'
+    ModuleVersion = '0.0.14'
 
     # Supported PSEditions
     CompatiblePSEditions = 'Core'
@@ -69,7 +69,7 @@
     # NestedModules = @()
 
     # Functions to export from this module
-    FunctionsToExport = @("Invoke-Jenkins", "Remove-JenkinsJob", "New-JenkinsJob", "Initialize-Jenkins")
+    FunctionsToExport = @("Invoke-Jenkins", "Invoke-JenkinsForm", "Invoke-JenkinsRequest", "Remove-JenkinsJob", "New-JenkinsJob", "Initialize-Jenkins")
 
     # Cmdlets to export from this module
     CmdletsToExport = '*'
