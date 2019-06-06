@@ -11,8 +11,10 @@ fi
 
 echo "We will use this commit SHA: ${COMMIT_SHA}"
 echo "Travis build dir: ${TRAVIS_BUILD_DIR}"
-echo "Travis repo slog: ${TRAVIS_REPO_SLUG}"
+echo "Travis repo slug: ${TRAVIS_REPO_SLUG}"
 
+# This step deletes the shallow clone travis automatically creates on bootstrapping of builds
+# so we can do a full clone where travis expects it.
 rm -rfv ${TRAVIS_BUILD_DIR} && mkdir ${TRAVIS_BUILD_DIR}
 
 cd $TRAVIS_BUILD_DIR

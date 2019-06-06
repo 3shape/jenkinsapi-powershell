@@ -7,7 +7,7 @@ Properties {
     $ModuleName = (Get-Item $PSScriptRoot\*.psd1)[0].BaseName
 
     # Path to the release notes file.  Set to $null if the release notes reside in the manifest file.
-    $ReleaseNotesPath = "$PSScriptRoot\ReleaseNotes.md"
+    $ReleaseNotesPath = $null
 
     # The directory used to publish the module from.  If you are using Git, the
     # $PublishDir should be ignored if it is under the workspace directory.
@@ -22,15 +22,14 @@ Properties {
         '.vscode',
         (Split-Path $PSCommandPath -Leaf)
     )
-
 }
 
 ###############################################################################
 # Customize these tasks for performing operations before and/or after publish.
 ###############################################################################
 Task PrePublish {
-    $functionDeclarations  = @( Get-ChildItem -Path $PublishDir\Public\*.ps1 -ErrorAction SilentlyContinue )
-    [string[]]$functionNames = @($functionDeclarations.BaseName)
+    $functionScriptFiles  = @(Get-ChildItem -Path $PublishDir\Public\*.ps1 -ErrorAction SilentlyContinue)
+    [string[]]$functionNames = @($functionScriptFiles.BaseName)
 
     Update-ModuleManifest -Path $PublishDir\${ModuleName}.psd1 `
         -ModuleVersion "$env:GitVersion_Version" `
@@ -61,12 +60,19 @@ Task PublishImpl -depends Test -requiredVariables PublishDir {
         $publishParams['Repository'] = $Repository
     }
 
-    Publish-Module @publishParams -WhatIf
+    Write-Host "Publishing $ModuleName version $env:GitVersion_Version"
+
+    Publish-Module @publishParams
 }
 
 Task Test -depends Build {
     Import-Module Pester
-    Invoke-Pester $PSScriptRoot/Tests
+    $testResult = Invoke-Pester $PSScriptRoot/Tests -PassThru
+
+    if ($TestResult.FailedCount -gt 0) {
+        $TestResult | Format-List
+        Write-Error -Message 'One or more tests for the module failed. Failing the build.'
+    }
 }
 
 Task Build -depends Clean -requiredVariables PublishDir, Exclude, ModuleName {
