@@ -22,7 +22,6 @@ Properties {
         '.vscode',
         (Split-Path $PSCommandPath -Leaf)
     )
-
 }
 
 ###############################################################################
@@ -66,7 +65,14 @@ Task PublishImpl -depends Test -requiredVariables PublishDir {
 
 Task Test -depends Build {
     Import-Module Pester
-    Invoke-Pester $PSScriptRoot/Tests
+    $testResult = Invoke-Pester $PSScriptRoot/Tests -PassThru
+
+    if ($TestResult.FailedCount -gt 0) {
+        $TestResult | Format-List
+        Write-Error -Message 'One or more Pester tests for the module failed. Build cannot continue!'
+    }
+
+    Write-Host "Test Result $testResult"
 }
 
 Task Build -depends Clean -requiredVariables PublishDir, Exclude, ModuleName {
