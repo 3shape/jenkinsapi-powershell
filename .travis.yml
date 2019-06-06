@@ -37,4 +37,4 @@ deploy:
   script: pwsh -c "Invoke-Psake -buildFile Build.ps1 -taskList build,test,publish"
   on:
     tags: true
-    branch: master
+    all_branches: true
