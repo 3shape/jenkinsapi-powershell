@@ -29,8 +29,8 @@ Properties {
 # Customize these tasks for performing operations before and/or after publish.
 ###############################################################################
 Task PrePublish {
-    $functionDeclarations  = @( Get-ChildItem -Path $PublishDir\Public\*.ps1 -ErrorAction SilentlyContinue )
-    [string[]]$functionNames = @($functionDeclarations.BaseName)
+    $functionScriptFiles  = @(Get-ChildItem -Path $PublishDir\Public\*.ps1 -ErrorAction SilentlyContinue)
+    [string[]]$functionNames = @($functionScriptFiles.BaseName)
 
     Update-ModuleManifest -Path $PublishDir\${ModuleName}.psd1 `
         -ModuleVersion "$env:GitVersion_Version" `
@@ -61,7 +61,7 @@ Task PublishImpl -depends Test -requiredVariables PublishDir {
         $publishParams['Repository'] = $Repository
     }
 
-    Publish-Module @publishParams -WhatIf
+    Publish-Module @publishParams
 }
 
 Task Test -depends Build {
