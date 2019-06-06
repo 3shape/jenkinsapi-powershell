@@ -33,6 +33,7 @@ script:
   - pwsh -c "Invoke-Psake -buildFile Build.ps1 -taskList build,test"
 
 deploy:
+  skip_cleanup: true
   provider: script
   script: pwsh -c "Invoke-Psake -buildFile Build.ps1 -taskList build,test,publish"
   on:
