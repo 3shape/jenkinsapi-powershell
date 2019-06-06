@@ -9,10 +9,10 @@
 @{
 
     # Script module or binary module file associated with this manifest.
-    RootModule = 'ThreeShape.Jenkins.psm1'
+    RootModule = 'Jenkins.Api.psm1'
 
     # Version number of this module.
-    ModuleVersion = '0.0.17'
+    ModuleVersion = '0.0.18'
 
     # Supported PSEditions
     CompatiblePSEditions = 'Core'
