@@ -9,7 +9,7 @@
 @{
 
     # Script module or binary module file associated with this manifest.
-    RootModule = 'ThreeShape.Jenkins.Beta.psm1'
+    RootModule = 'ThreeShape.Jenkins.psm1'
 
     # Version number of this module.
     ModuleVersion = '0.0.17'
