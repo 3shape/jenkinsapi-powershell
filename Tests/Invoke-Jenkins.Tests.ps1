@@ -1,4 +1,4 @@
- Import-Module -Name $PSScriptRoot\..\ThreeShape.Jenkins.Beta.psm1
+Import-Module -Name (Get-ChildItem $PSScriptRoot\..\*.psm1 | Select-Object -first 1).FullName
 . $PSScriptRoot/../Private/Get-JenkinsRequestHeaders.ps1
 . $PSScriptRoot/../Private/ConvertTo-BasicAuth.ps1
 . $PSScriptRoot/../Private/Get-CrumbHeader.ps1
