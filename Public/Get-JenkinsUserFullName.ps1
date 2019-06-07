@@ -1,21 +1,13 @@
+. "$PSScriptRoot\..\Private\Get-JenkinsUserInfo.ps1"
+
 function Get-JenkinsUserFullName {
     [CmdletBinding()]
     param (
-        [Parameter(Mandatory=$true)]
-        [string] $Username,
-        [Parameter(Mandatory=$true)]
-        [securestring] $Password
+        [String] $Username = $script:apiUsername,
+        [SecureString] $Password = $script:apiPassword
     )
 
-    if (!$script:fullNamesByUser) {
-        $script:fullNamesByUser = [hashtable]::new()
-    }
-
-    if ($fullName = $fullNamesByUser[$Username]) {
-        return $fullName
-    } else {
-        $response = Invoke-JenkinsRequest -Resource "/user/me/api/json"
-        $script:fullNamesByUser[$Username] = $response.Content.fullName
-        return $fullNamesByUser[$Username]
-    }
+    $userInfo = Get-JenkinsUserInfo -Username $Username -Password $Password
+    $fullName = if ($null -ne $userInfo) { $userInfo.fullName } else { $null }
+    return $fullName
 }

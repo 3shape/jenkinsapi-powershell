@@ -1,10 +1,11 @@
-Import-Module "$PSScriptRoot\..\ThreeShape.Jenkins.Beta.psm1" -Force
+Import-Module -Name (Get-ChildItem $PSScriptRoot\..\*.psm1 | Select-Object -first 1).FullName -Force
 . "$PSScriptRoot\..\Public\Get-JenkinsUserFullName.ps1"
+. "$PSScriptRoot\..\Private\Get-JenkinsUserInfo.ps1"
 
 Describe 'Get-JenkinsUserFullName method' {
 
     AfterEach {
-        $script:fullNamesByUser = $null
+        $script:AllUserInfo = $null
     }
 
     $Fullname1 = "Robot"
@@ -48,16 +49,16 @@ Describe 'Get-JenkinsUserFullName method' {
             $user = $UserInfo1.id
             $pass = "changeme"  | ConvertTo-SecureString -AsPlainText -Force
 
-            Mock -CommandName Invoke-JenkinsRequest { return @{Content = $UserInfo1 } } -Verifiable
+            Mock -CommandName Get-JenkinsUserInfo { return $UserInfo1 } -Verifiable
             $fullName = Get-JenkinsUserFullName -UserName $user -Password $pass
             $fullName | Should -BeExactly $Fullname1
         }
 
         It 'It is looked up, cached and re-used' {
             $user = $UserInfo2.id
-            $pass = "changeme" | ConvertTo-SecureString -AsPlainText -Force
+            $pass = "changeme"  | ConvertTo-SecureString -AsPlainText -Force
 
-            Mock -CommandName Invoke-JenkinsRequest { return @{Content = $UserInfo2 } } -Verifiable
+            Mock -CommandName Get-JenkinsUserInfo { return $UserInfo2 } -Verifiable
             $fullName = Get-JenkinsUserFullName -UserName $user -Password $pass
             $fullName | Should -BeExactly $Fullname2
         }
@@ -67,7 +68,7 @@ Describe 'Get-JenkinsUserFullName method' {
 
         It 'Requests for fullname, then looked up from cache subsequently' {
             $user = $UserInfo1.id
-            $pass = "changeme" | ConvertTo-SecureString -AsPlainText -Force
+            $pass = "changeme"  | ConvertTo-SecureString -AsPlainText -Force
 
             Mock -CommandName Invoke-JenkinsRequest { return @{Content = $UserInfo1 } } -Verifiable
             Get-JenkinsUserFullName -UserName $user -Password $pass
@@ -81,7 +82,7 @@ Describe 'Get-JenkinsUserFullName method' {
         It 'Requests for fullname, then looked up from cache subsequently' {
             $user1 = $UserInfo1.id
             $user2 = $UserInfo2.id
-            $pass = "changeme" | ConvertTo-SecureString -AsPlainText -Force
+            $pass = "changeme"  | ConvertTo-SecureString -AsPlainText -Force
 
             Mock -CommandName Invoke-JenkinsRequest { return @{Content = $UserInfo1 } } -Verifiable
             $name1 = Get-JenkinsUserFullName -UserName $user1 -Password $pass
