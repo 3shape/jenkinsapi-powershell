@@ -59,40 +59,50 @@ Describe 'Get-JenkinsUserFullName method' {
             $pass = "changeme"  | ConvertTo-SecureString -AsPlainText -Force
 
             Mock -CommandName Get-JenkinsUserInfo { return $UserInfo2 } -Verifiable
-            $fullName = Get-JenkinsUserFullName -UserName $user -Password $pass
-            $fullName | Should -BeExactly $Fullname2
+            $name = Get-JenkinsUserFullName -UserName $user -Password $pass
+            $name | Should -BeExactly $Fullname2
         }
     }
 
-    Context 'When fullname is requested at least twice for the same user' {
+    Context 'When fullname is requested at least twice for the same user, against itself' {
 
-        It 'Requests for fullname, then looked up from cache subsequently' {
-            $user = $UserInfo1.id
+        It '1st user against itself' {
+            $user1 = $UserInfo1.id
             $pass = "changeme"  | ConvertTo-SecureString -AsPlainText -Force
 
             Mock -CommandName Invoke-JenkinsRequest { return @{Content = $UserInfo1 } } -Verifiable
-            Get-JenkinsUserFullName -UserName $user -Password $pass
-            Get-JenkinsUserFullName -UserName $user -Password $pass
+            Get-JenkinsUserFullName -UserName $user1 -Password $pass
+            Get-JenkinsUserFullName -UserName $user1 -Password $pass -TargetUsername $user1
             Assert-MockCalled -CommandName Invoke-JenkinsRequest -Exactly 1
+        }
+
+        It '2nd user against itself' {
+            $user2 = $UserInfo2.id
+
+            Get-JenkinsUserFullName -UserName $user2 -Password $pass
+            Get-JenkinsUserFullName -UserName $user2 -Password $pass -TargetUsername $User2
+            Assert-MockCalled -CommandName Invoke-JenkinsRequest -Exactly 2
         }
     }
 
-    Context 'When fullname is requested at least twice but for different users' {
+    Context 'When fullname is requested at least twice for different users, against different users' {
 
-        It 'Requests for fullname, then looked up from cache subsequently' {
+        It '1st user against 2nd user' {
             $user1 = $UserInfo1.id
             $user2 = $UserInfo2.id
             $pass = "changeme"  | ConvertTo-SecureString -AsPlainText -Force
 
-            Mock -CommandName Invoke-JenkinsRequest { return @{Content = $UserInfo1 } } -Verifiable
-            $name1 = Get-JenkinsUserFullName -UserName $user1 -Password $pass
             Mock -CommandName Invoke-JenkinsRequest { return @{Content = $UserInfo2 } } -Verifiable
-            $name2 = Get-JenkinsUserFullName -UserName $user2 -Password $pass
-            $name3 = Get-JenkinsUserFullName -UserName $user2 -Password $pass
+            $name2 = Get-JenkinsUserFullName -UserName $user1 -Password $pass -TargetUsername $user2
+            $name2 | Should -BeExactly $Fullname2
+            Assert-MockCalled -CommandName Invoke-JenkinsRequest -Exactly 1
+        }
 
-            $name1 | Should -Be $Fullname1
-            $name2 | Should -Be $Fullname2
-            $name3 | Should -Be $Fullname2
+        It '2nd user against 1st user' {
+
+            Mock -CommandName Invoke-JenkinsRequest { return @{Content = $UserInfo1 } } -Verifiable
+            $name1 = Get-JenkinsUserFullName -UserName $user2 -Password $pass -TargetUsername $User2
+            $name1 | Should -BeExactly $Fullname1
             Assert-MockCalled -CommandName Invoke-JenkinsRequest -Exactly 2
         }
     }
