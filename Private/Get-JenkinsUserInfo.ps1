@@ -18,7 +18,7 @@ function Get-JenkinsUserInfo {
         return $userInfo
     } else {
         $response = Invoke-JenkinsRequest -Resource "/user/$UsernameToLookup/api/json" -Username $Username -Password $Password
-        $script:allUserInfo[$UsernameToLookup] = $response.Content
+        $script:allUserInfo[$UsernameToLookup] = $response.Content | ConvertFrom-Json
         return $script:allUserInfo[$UsernameToLookup]
     }
 }

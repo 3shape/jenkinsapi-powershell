@@ -23,7 +23,7 @@ Describe 'Get-JenkinsUserFullName method' {
             }
         ]
 }
-"@ | ConvertFrom-Json
+"@
 
     $Fullname2 = "praise the sun"
     $UserInfo2 = @"
@@ -40,7 +40,7 @@ Describe 'Get-JenkinsUserFullName method' {
             }
         ]
 }
-"@ | ConvertFrom-Json
+"@
 
     $user1 = $UserInfo1.id
     $user2 = $UserInfo2.id
