@@ -7,7 +7,7 @@ This module can be found in PowerShell Gallery: https://www.powershellgallery.co
 
 ## Functions
 
-This module offers the following functions:
+This module offers the following functions, all from the [Public](/Public) folder:
 
 * Get-JenkinsUserFullName
 * Initialize-Jenkins
@@ -24,6 +24,7 @@ For CI, see https://travis-ci.com/3shapeAS/jenkinsapi-powershell
 ### Release Process
 
 * Contribute a PR
+* Pass all Pester tests!
 * Get it approved and merged to master
 * Push a tag
 * Deploys to [PSGallery](https://www.powershellgallery.com/packages/Jenkins.Api) in 5 minutes
