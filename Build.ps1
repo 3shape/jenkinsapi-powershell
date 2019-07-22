@@ -71,7 +71,7 @@ Task Test -depends Build {
 
     if ($TestResult.FailedCount -gt 0) {
         $TestResult | Format-List
-        Write-Error -Message 'One or more tests for the module failed. Failing the build.'
+        throw 'One or more tests for the module failed. Failing the build.'
     }
 }
 

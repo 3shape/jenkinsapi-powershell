@@ -26,12 +26,12 @@ install:
   - "echo \"GitVersion says: ${GitVersion_Version} \""
 
 script:
-  - pwsh -c "Invoke-Psake -buildFile Build.ps1 -taskList build,test"
+  - pwsh -f "./Invoke-Tests.ps1"
 
 deploy:
   skip_cleanup: true
   provider: script
-  script: pwsh -c "Invoke-Psake -buildFile Build.ps1 -taskList build,test,publish"
+  script: pwsh -f "./Invoke-Publish.ps1"
   on:
     tags: true
     branch: master

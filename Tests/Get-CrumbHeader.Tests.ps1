@@ -16,7 +16,7 @@ Describe 'Get-CrumbHeader method' {
 
             $crumbHeader = Get-CrumbHeader -UserName $user -Password $pass
             Assert-MockCalled -CommandName Invoke-RestMethod -Exactly 1
-            $crumbHeader | Should -BeExactly "requestfield=headerdata"
+            $crumbHeader | Should -BeExactly "requestfield=headerdata"            
         }
     }
 
