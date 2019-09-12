@@ -1,3 +1,5 @@
+#Requires -PSEdition Core -Version 6
+
 . "$PSScriptRoot\..\Private\Get-JenkinsUserInfo.ps1"
 
 function Get-JenkinsUserFullName {

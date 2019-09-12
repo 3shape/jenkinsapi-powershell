@@ -1,3 +1,5 @@
+#Requires -PSEdition Core -Version 6
+
 function New-JenkinsJob {
     [CmdletBinding()]
     param (
