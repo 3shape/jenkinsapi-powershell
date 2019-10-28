@@ -31,26 +31,27 @@ function Invoke-Jenkins {
     Write-Debug "Body: $Body"
     Write-Debug "Query: $Query"
 
+    $req = @{
+        Uri = $request.Uri
+        Headers = $headers
+        Method = $Method
+        UseBasicParsing = $true
+        TimeOutSec = 30
+        ErrorAction = "SilentlyContinue"
+        MaximumRedirection = $MaximumRedirectionCount
+    }
+    if($null -ne $Form){
+        $req.Form = $Form
+    }
+    else {
+        $req.Body = $Body
+        $req.ContentType = $ContentType
+    }
+
     while ($attempts -lt $MaximumAttempts) {
 
         try {
             $attempts += 1
-            $req = @{
-                Uri = $request.Uri
-                Headers = $headers
-                Method = $Method
-                UseBasicParsing = $true
-                TimeOutSec = 30
-                ErrorAction = "SilentlyContinue"
-                MaximumRedirection = $MaximumRedirectionCount
-            }
-            if($null -ne $Form){
-                $req.Form = $Form
-            }
-            else {
-                $req.Body = $Body
-                $req.ContentType = $ContentType
-            }
             $response = Invoke-WebRequest @req
             Write-Debug "Response for Invoke-Jenkins: StatusCode : $($response.StatusCode), Headers: $($response.Headers), Content: $($response.Content)"
             return $response
