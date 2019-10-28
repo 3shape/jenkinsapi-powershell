@@ -35,27 +35,23 @@ function Invoke-Jenkins {
 
         try {
             $attempts += 1
+            $req = @{
+                Uri = $request.Uri
+                Headers = $headers
+                Method = $Method
+                UseBasicParsing = $true
+                TimeOutSec = 30
+                ErrorAction = "SilentlyContinue"
+                MaximumRedirection = $MaximumRedirectionCount
+            }
             if($null -ne $Form){
-                $response = Invoke-WebRequest -Uri $Request.Uri `
-                -Headers $headers `
-                -Method $Method `
-                -Form $Form `
-                -UseBasicParsing `
-                -TimeoutSec 30 `
-                -ErrorAction SilentlyContinue `
-                -MaximumRedirection $MaximumRedirectionCount
+                $req.Form = $Form
             }
             else {
-                $response = Invoke-WebRequest -Uri $Request.Uri `
-                -Headers $headers `
-                -Method $Method `
-                -Body $body `
-                -ContentType $ContentType `
-                -UseBasicParsing `
-                -TimeoutSec 30 `
-                -ErrorAction SilentlyContinue `
-                -MaximumRedirection $MaximumRedirectionCount
+                $req.Body = $Body
+                $req.ContentType = $ContentType
             }
+            $response = Invoke-WebRequest @req
             Write-Debug "Response for Invoke-Jenkins: StatusCode : $($response.StatusCode), Headers: $($response.Headers), Content: $($response.Content)"
             return $response
         } catch [System.Net.Http.HttpRequestException] {
@@ -75,5 +71,3 @@ function Invoke-Jenkins {
         }
     }
 }
-
-
