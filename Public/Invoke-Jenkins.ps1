@@ -39,6 +39,7 @@ function Invoke-Jenkins {
         TimeOutSec = 30
         ErrorAction = "SilentlyContinue"
         MaximumRedirection = $MaximumRedirectionCount
+        WebSession = $script:sessionByUser[$Username]
     }
     if($null -ne $Form){
         $req.Form = $Form
